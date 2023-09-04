@@ -5,6 +5,19 @@ $connection = require_once './connection.php';
 
 $notes = $connection->getNotes();
 
+$currentNote = [
+    'id'=>'',
+    'title' => '',
+    'description' => '',
+];
+
+if (isset($_GET['id'])) {
+    $currentNote = $connection->getNoteById($_GET['id']);
+}
+
+echo "<pre>";
+var_dump($currentNote);
+echo "</pre>";
 
 ?>
 <!DOCTYPE html>
@@ -20,11 +33,16 @@ $notes = $connection->getNotes();
 
 <body>
     <div>
-        <form class="new-note" action="create.php" method="post">
-            <input type="text" name="title" placeholder="Note title" autocomplete="off">
-            <textarea name="description" cols="30" rows="4" placeholder="Note Description"></textarea>
+        <form class="new-note" action="save.php" method="post">
+            <input type="hidden" name="id" value="<?php echo $currentNote['id'] ?>">
+            <input type="text" name="title" placeholder="Note title" autocomplete="off" value="<?php echo $currentNote['title'] ?>">
+            <textarea name="description" cols="30" rows="4" placeholder="Note Description"><?php echo $currentNote['description'] ?></textarea>
             <button>
-                New Note
+                <?php if ($currentNote['id']) : ?>
+                    Update Note
+                <?php else : ?>
+                    New Note
+                <?php endif ?>
             </button>
         </form>
         <div class="notes">
